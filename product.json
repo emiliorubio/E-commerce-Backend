@@ -1,0 +1,6 @@
+[
+  { "id": 1, "name": "Churrasco", "price": 3990 },
+  { "id": 2, "name": "As", "price": 4500 },
+  { "id": 3, "name": "Completo", "price": 1990 },
+  { "id": 4, "name": "Salchipapa", "price": 5000 }
+]
