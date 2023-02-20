@@ -3,6 +3,12 @@ const writeToFile = require("./writeToFile");
 
 const carts = require("./carts.json");
 const cartsPath = "./carts.json";
+const app = express();
+
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
+const products = require("./product.json");
+const productsPath = "./products.json";
 
 const cartsRouter = express.Router();
 
@@ -15,6 +21,25 @@ cartsRouter.route("/").post((request, response) => {
   carts.push(newCart);
   writeToFile(cartsPath, carts);
   response.json(newCart);
+});
+
+io.on('connection', (socket) => {
+  console.log('A user connected');
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+  socket.emit('productList', products);
+  socket.on('addProduct', (product) => {
+    product.id = products.length + 1;
+    products.push(product);
+    writeToFile(productsPath, products);
+    io.emit('productList', products);
+  });
+  socket.on('deleteProduct', (productId) => {
+    products = products.filter((product) => product.id !== productId);
+    writeToFile(productsPath, products);
+    io.emit('productList', products);
+  });
 });
 
 cartsRouter.route("/:id").get((request, response) => {
